@@ -1,8 +1,8 @@
-# NYTimes Objective-C Style Guide
+# Westfield Labs Objective-C Style Guide
 
-This style guide outlines the coding conventions of the iOS teams at The New York Times. We welcome your feedback in [issues](https://github.com/NYTimes/objective-c-style-guide/issues) and [pull requests](https://github.com/NYTimes/objective-c-style-guide/pulls). Also, [we’re hiring](http://www.nytco.com/careers/).
+This style guide outlines the coding conventions of the iOS team at Westfield Labs. We welcome your feedback in [issues](https://github.com/westfieldlabs/objective-c-style-guide/issues) and [pull requests](https://github.com/westfieldlabs/objective-c-style-guide/issues). Also, [we’re hiring](https://github.com/westfieldlabs/objective-c-style-guide/issues).
 
-Thanks to all of [our contributors](https://github.com/NYTimes/objective-c-style-guide/graphs/contributors).
+Originally forked from [The New York Times Objective-C Style Guide](https://github.com/NYTimes/objective-c-style-guide).
 
 ## Introduction
 
@@ -32,7 +32,6 @@ Here are some of the documents from Apple that informed the style guide. If some
 * [Enumerated Types](#enumerated-types)
 * [Bitmasks](#bitmasks)
 * [Private Properties](#private-properties)
-* [Image Naming](#image-naming)
 * [Booleans](#booleans)
 * [Singletons](#singletons)
 * [Imports](#imports)
@@ -64,8 +63,7 @@ UIApplication.sharedApplication.delegate;
 ```objc
 if (user.isHappy) {
     // Do something
-}
-else {
+} else {
     // Do something else
 }
 ```
@@ -167,7 +165,7 @@ Property definitions should be used in place of naked instance variables wheneve
 ```objc
 @interface NYTSection: NSObject
 
-@property (nonatomic) NSString *headline;
+@property (nonatomic, copy) NSString *headline;
 
 @end
 ```
@@ -180,9 +178,50 @@ Property definitions should be used in place of naked instance variables wheneve
 }
 ```
 
+### Properties Qualifiers
+
+Properties should *always* have qualifiers (`nonatomic` or `atomic` and `weak`, `strong` or `copy`). The use of `assign` is discouraged, since it's the only option for primitive types (and `weak` should be used instead for an object type).
+
+`readwrite` should also be ommited for the same reason as `assign` (unless if you're overriding a property behavior and it's really needed).
+
+`copy` should be used for types that have a mutable variant, such as `NSString`, `NSDictionary` and `NSMutableDictionary`.
+
+The order of the attributes must be `(nonatomic/atomic) (weak/strong/copy) (readonly) (nonnull/null)`.
+
+**For example:**
+
+```objc
+@property (nonatomic, copy) NSString *headline;
+@property (nonatomic, copy, readonly) NSString *title;
+@property (nonatomic) NSInteger currentPage;
+@property (nonatomic, weak, nullable) id<UITableViewDelegate> delegate; 
+```
+
+**Not:**
+
+```objc
+@property (nonatomic, strong) NSString *headerText;
+@property (nonatomic, readwrite) CGFloat imageHeight;
+@property NSInteger currentPage;
+@property (nonatomic) NSArray *URLs;
+```
+
 #### Variable Qualifiers
 
-When it comes to the variable qualifiers [introduced with ARC](https://developer.apple.com/library/ios/releasenotes/objectivec/rn-transitioningtoarc/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226-CH1-SW4), the qualifier (`__strong`, `__weak`, `__unsafe_unretained`, `__autoreleasing`) should be placed between the asterisks and the variable name, e.g., `NSString * __weak text`. 
+When it comes to the variable qualifiers [introduced with ARC](https://developer.apple.com/library/ios/releasenotes/objectivec/rn-transitioningtoarc/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226-CH1-SW4), the qualifier (`__strong`, `__weak`, `__unsafe_unretained`, `__autoreleasing`) should be placed before the variable type, e.g., `__weak NSString *text`. 
+
+#### Types
+
+Platform-dependent primitive types should be avoided:
+
+- `NSInteger` or `NSUInteger` instead of `long` or `int`
+- `CGFloat` instead of `float` or `double`
+
+For calling C-functions that receives a `float` or `double`, you should check if there's a version for `CGFloat` of it implemented in [CGFloatType](https://github.com/kylef/CGFloatType). For example:
+
+```objc
+CGFloat roundedWidth = roundCGFloat(width);
+```
 
 ## Naming
 
@@ -214,6 +253,7 @@ static const NSTimeInterval NYTArticleViewControllerNavigationFadeAnimationDurat
 
 ```objc
 static const NSTimeInterval fadetime = 1.7;
+static const NSTimeInterval kFadeAnimationDuration = 0.5;
 ```
 
 Properties and local variables should be camel-case with the leading word being lowercase.
@@ -356,6 +396,8 @@ static const CGFloat NYTImageThumbnailHeight = 50.0;
 **Not:**
 
 ```objc
+static const NSTimeInterval kFadeAnimationDuration = 0.5;
+
 #define CompanyName @"The New York Times Company"
 
 #define thumbnailHeight 2
@@ -405,20 +447,9 @@ Private properties should be declared in class extensions (anonymous categories)
 @end
 ```
 
-## Image Naming
-
-Image names should be named consistently to preserve organization and developer sanity. They should be named as one camel case string with a description of their purpose, followed by the un-prefixed name of the class or property they are customizing (if there is one), followed by a further description of color and/or placement, and finally their state.
-
-**For example:**
-
-* `RefreshBarButtonItem` / `RefreshBarButtonItem@2x` and `RefreshBarButtonItemSelected` / `RefreshBarButtonItemSelected@2x`
-* `ArticleNavigationBarWhite` / `ArticleNavigationBarWhite@2x` and `ArticleNavigationBarBlackSelected` / `ArticleNavigationBarBlackSelected@2x`.
-
-Images that are used for a similar purpose should be grouped in respective groups in an Images folder or Asset Catalog.
-
 ## Booleans
 
-Never compare something directly to `YES`, because `YES` is defined as `1`, and a `BOOL` in Objective-C is a `CHAR` type that is 8 bits long (so a value of `11111110` will return `NO` if compared to `YES`).
+Never compare something directly to `YES`, because `YES` is defined as `1`, and a `BOOL` in Objective-C is a `CHAR` type that is 8 bits long (so a value of `11111110` will return `NO` if compared to `YES`). Comparing to `NO` is also discouraged.
 
 **For an object pointer:**
 
@@ -435,13 +466,14 @@ if (someObject == nil) {
 ```objc
 if (isAwesome)
 if (!someNumber.boolValue)
-if (someNumber.boolValue == NO)
 ```
 
 **Not:**
 
 ```objc
 if (isAwesome == YES) // Never do this.
+
+if (someNumber.boolValue == NO) // Prefer !someNumber.boolValue
 ```
 
 If the name of a `BOOL` property is expressed as an adjective, the property’s name can omit the `is` prefix but should specify the conventional name for the getter.
@@ -473,21 +505,30 @@ This will prevent [possible and sometimes frequent crashes](http://cocoasamurai.
 
 ## Imports
 
-If there is more than one import statement, group the statements [together](http://ashfurrow.com/blog/structuring-modern-objective-c/). Commenting each group is optional.
+The imports are automatically organized by a build phase. The expected behavior can be seen below.
 
-Note: For modules use the [@import](http://clang.llvm.org/docs/Modules.html#using-modules) syntax.
+Note: For modules use the [@import](http://clang.llvm.org/docs/Modules.html#using-modules) syntax. `@import` should be used whenever possible.
 
 ```objc
-// Frameworks
-@import QuartzCore;
 
-// Models
-#import "NYTUser.h"
+@import CoreGraphics;
+@import UIKit;
 
-// Views
+#import <AFNetworking/AFNetworking.h>
+
+#import "NYTProfileViewController.h"
 #import "NYTButton.h"
 #import "NYTUserView.h"
 ```
+
+The imports are grouped by kinds: 
+
+1. Module imports (`@import Something;`) sorted alphabetically
+2. Library imports (`#import <SomeLibrary/Something.h>`) sorted alphabetically
+3. Local import (`#import "Something.h`) sorted alphabetically. If the file is an implementation file (`.m`), the first import is its header.
+
+
+There should be an empty line between two different groups. 
 
 ## Protocols
 
@@ -513,15 +554,3 @@ The physical files should be kept in sync with the Xcode project files in order 
 
 When possible, always turn on “Treat Warnings as Errors” in the target’s Build Settings and enable as many [additional warnings](http://boredzo.org/blog/archives/2009-11-07/warnings) as possible. If you need to ignore a specific warning, use [Clang’s pragma feature](http://clang.llvm.org/docs/UsersManual.html#controlling-diagnostics-via-pragmas).
 
-# Other Objective-C Style Guides
-
-If ours doesn’t fit your tastes, have a look at some other style guides:
-
-* [Google](http://google-styleguide.googlecode.com/svn/trunk/objcguide.xml)
-* [GitHub](https://github.com/github/objective-c-style-guide)
-* [Adium](https://trac.adium.im/wiki/CodingStyle)
-* [Sam Soffes](https://gist.github.com/soffes/812796)
-* [CocoaDevCentral](http://cocoadevcentral.com/articles/000082.php)
-* [Luke Redpath](http://lukeredpath.co.uk/blog/2011/06/28/my-objective-c-style-guide/)
-* [Marcus Zarra](http://www.cimgf.com/zds-code-style-guide/)
-* [Wikimedia](https://www.mediawiki.org/wiki/Wikimedia_Apps/Team/iOS/ObjectiveCStyleGuide)
