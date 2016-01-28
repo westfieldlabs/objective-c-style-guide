@@ -186,7 +186,7 @@ Properties should *always* have qualifiers (`nonatomic` or `atomic` and `weak`, 
 
 `copy` should be used for types that have a mutable variant, such as `NSString`, `NSDictionary` and `NSMutableDictionary`.
 
-The order of the attributes must be `(nonatomic/atomic) (weak/strong/copy) (readonly) (nonnull/null)`.
+The order of the attributes must be `(nonatomic/atomic), (weak/strong/copy), (readonly), (nonnull/null)`.
 
 **For example:**
 
@@ -194,7 +194,9 @@ The order of the attributes must be `(nonatomic/atomic) (weak/strong/copy) (read
 @property (nonatomic, copy) NSString *headline;
 @property (nonatomic, copy, readonly) NSString *title;
 @property (nonatomic) NSInteger currentPage;
-@property (nonatomic, weak, nullable) id<UITableViewDelegate> delegate; 
+@property (nonatomic, weak) IBOutlet UIButton *privacyPolicyButton;
+@property (nonatomic, weak, nullable) id<UITableViewDelegate> delegate;
+@property (nonatomic, weak) id<UITableViewDelegate> delegate;
 ```
 
 **Not:**
@@ -204,6 +206,8 @@ The order of the attributes must be `(nonatomic/atomic) (weak/strong/copy) (read
 @property (nonatomic, readwrite) CGFloat imageHeight;
 @property NSInteger currentPage;
 @property (nonatomic) NSArray *URLs;
+@property (nonatomic, strong) IBOutlet UIButton *contactButton;
+@property (weak, nonatomic) IBOutlet UIButton *submitButton;
 ```
 
 #### Variable Qualifiers
