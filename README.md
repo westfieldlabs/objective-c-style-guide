@@ -221,7 +221,7 @@ Platform-dependent primitive types should be avoided:
 - `NSInteger` or `NSUInteger` instead of `long` or `int`
 - `CGFloat` instead of `float` or `double`
 
-For calling C-functions that receives a `float` or `double`, you should check if there's a version for `CGFloat` of it implemented in [CGFloatType](https://github.com/kylef/CGFloatType). For example:
+For calling C-functions that receive a `float` or `double`, you should check if there's a version that takes a `CGFloat` implemented in [CGFloatType](https://github.com/kylef/CGFloatType). For example:
 
 ```objc
 CGFloat roundedWidth = roundCGFloat(width);
