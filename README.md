@@ -1,6 +1,6 @@
 # Westfield Labs Objective-C Style Guide
 
-This style guide outlines the coding conventions of the iOS team at Westfield Labs. We welcome your feedback in [issues](https://github.com/westfieldlabs/objective-c-style-guide/issues) and [pull requests](https://github.com/westfieldlabs/objective-c-style-guide/issues). Also, [we’re hiring](https://github.com/westfieldlabs/objective-c-style-guide/issues).
+This style guide outlines the coding conventions of the iOS team at Westfield Labs. We welcome your feedback in [issues](https://github.com/westfieldlabs/objective-c-style-guide/issues) and [pull requests](https://github.com/westfieldlabs/objective-c-style-guide/issues). Also, [we’re hiring](http://www.westfieldlabs.com/careers).
 
 Originally forked from [The New York Times Objective-C Style Guide](https://github.com/NYTimes/objective-c-style-guide).
 
