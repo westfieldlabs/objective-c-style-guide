@@ -21,6 +21,7 @@ Here are some of the documents from Apple that informed the style guide. If some
   * [Ternary Operator](#ternary-operator)
 * [Error handling](#error-handling)
 * [Methods](#methods)
+* [Line breaks](#line-breaks)
 * [Variables](#variables)
 * [Naming](#naming)
   * [Categories](#categories)
@@ -139,6 +140,48 @@ In method signatures, there should be a space after the scope (`-` or `+` symbol
 ```objc
 - (void)setExampleText:(NSString *)text image:(UIImage *)image;
 ```
+
+## Line Breaks
+
+You can break lines in the middle of a method declaration or call, as long as the new line is aligned on colons:
+
+**For example:**
+```objc
+- (void)setReallyLongMethodNameThatDoesntEventFitOnScreenExampleText:(NSString *)text 
+                           reallyLongSecondParameterThatIsNamedImage:(UIImage *)image;
+                                                               
+                                                               
+[self setReallyLongMethodNameThatDoesntEventFitOnScreenExampleText:@"Text"
+                         reallyLongSecondParameterThatIsNamedImage:nil];
+                                               
+```
+
+However, you **can't** break lines on a method call if one of the parameter is an inline block, to avoid long identation.
+
+**For example:**
+```objc
+NSURLSessionDownloadTask *downloadTask = [manager downloadTaskWithRequest:request progress:nil destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
+    NSURL *documentsDirectoryURL = [[NSFileManager defaultManager] URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+    return [documentsDirectoryURL URLByAppendingPathComponent:[response suggestedFilename]];
+} completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
+    NSLog(@"File downloaded to: %@", filePath);
+}];
+```
+
+**Not:**
+```objc
+NSURLSessionDownloadTask *downloadTask = [manager downloadTaskWithRequest:request
+                                                                 progress:nil
+                                                              destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
+                                                                  NSURL *documentsDirectoryURL = [[NSFileManager defaultManager] URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+                                                                  return [documentsDirectoryURL URLByAppendingPathComponent:[response suggestedFilename]];
+                                                              }
+                                                        completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
+                                                            NSLog(@"File downloaded to: %@", filePath);
+                                                        }];
+```
+
+Note that you also shouldn't break line before an end curly brace and the next parameter.
 
 ## Variables
 
