@@ -141,6 +141,16 @@ In method signatures, there should be a space after the scope (`-` or `+` symbol
 - (void)setExampleText:(NSString *)text image:(UIImage *)image;
 ```
 
+The order of method signatures on header files should always have the class methods preceding the instance methods and include an empty line between both types of methods.
+
+**For example:**
+```objc
++ (instancetype)sharedManager;
+
+- (void)getRequestWithURL:(NSURL *)URL; 
+- (void)getRequestWithURLString:(NSString *)URLString; 
+```
+
 ## Line Breaks
 
 You can break lines in the middle of a method declaration or call, as long as the new line is aligned on colons:
