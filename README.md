@@ -371,6 +371,8 @@ When they are needed, comments should be used to explain **why** a particular pi
 
 Block comments should generally be avoided, as code should be as self-documenting as possible, with only the need for intermittent, few-line explanations. This does not apply to those comments used to generate documentation.
 
+Xcode's default file comment header with a Copyright notice should be avoided, except when using 3rd party code that for some reason wasn't imported via CocoaPods.
+
 ## init and dealloc
 
 `dealloc` methods should be placed at the top of the implementation, directly after the `@synthesize` and `@dynamic` statements. `init` should be placed directly below the `dealloc` methods of any class.
